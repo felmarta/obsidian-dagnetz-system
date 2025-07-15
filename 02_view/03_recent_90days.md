@@ -18,16 +18,6 @@ const memoizeZeroArg = (fn) => {
     };
 };
 
-const memoizeOneArg = (fn) => {
-    const cache = new Map();
-    return (arg) => {
-        if (cache.has(arg)) return cache.get(arg);
-        const result = fn(arg);
-        cache.set(arg, result);
-        return result;
-    };
-};
-
 const formatDateTime = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -81,17 +71,6 @@ const getCurrentDateString = memoizeZeroArg(() => {
     return `${year}/${month}/${day}`;
 });
 
-const extractPageData = memoizeOneArg((filePath) => {
-    const page = dv.page(filePath);
-    return {
-        page,
-        outlinks: page?.file?.outlinks || [],
-        tags: page?.file?.tags || []
-    };
-});
-
-const isMarkdownFile = (file) => file.extension === 'md';
-
 const createPathMatcher = memoizeZeroArg(() => {
     const escapedRootDir = ROOT_DIR.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return new RegExp(`^${escapedRootDir}/(\\d{4})/(\\d{2})/(\\d{2})`);
@@ -108,44 +87,59 @@ const isFileRelevant = (filePath, datePaths) => {
 };
 
 const processFiles = () => {
-    const allFiles = app.vault.getFiles();
     const datePaths = generateDatePaths();
     const todayStr = getCurrentDateString();
     const todayPath = `${ROOT_DIR}/${todayStr}`;
 
-    const todayFiles = new Array();
-    const recentFiles = new Array();
+    const todayFiles = [];
+    const recentFiles = [];
     const backlinkMap = new Map();
     const outlinkMap = new Map();
     const pageDataCache = new Map();
-    const seen = new Set();
 
-    for (const file of allFiles) {
-        if (!isFileRelevant(file.path, datePaths) || seen.has(file.path)) continue;
-        seen.add(file.path);
+    const allPages = dv.pages(`"${ROOT_DIR}"`)
+        .array()
+        .filter(page => isFileRelevant(page.file.path, datePaths));
 
-        const isToday = file.path.startsWith(todayPath);
+    allPages.forEach(page => {
+        const file = app.vault.getAbstractFileByPath(page.file.path);
+        const isToday = page.file.path.startsWith(todayPath);
+        
         (isToday ? todayFiles : recentFiles).push(file);
 
-        if (isMarkdownFile(file)) {
-            const pageData = extractPageData(file.path);
+        pageDataCache.set(page.file.path, {
+            page,
+            outlinks: page.file.outlinks || [],
+            tags: page.file.tags || []
+        });
+        
+        outlinkMap.set(page.file.path, page.file.outlinks || []);
 
-            pageDataCache.set(file.path, pageData);
-            outlinkMap.set(file.path, pageData.outlinks);
-
-            pageData.outlinks.forEach(outlink => {
-                if (!outlink.path) return;
-
+        const outlinks = page.file.outlinks?.array() || [];
+        outlinks
+            .filter(outlink => outlink?.path)
+            .forEach(outlink => {
                 if (!backlinkMap.has(outlink.path)) {
                     backlinkMap.set(outlink.path, []);
                 }
                 backlinkMap.get(outlink.path).push({
-                    path: file.path,
-                    name: file.name
+                    path: page.file.path,
+                    name: page.file.name
                 });
             });
-        }
-    }
+    });
+
+    const allFiles = app.vault.getFiles();
+    const seen = new Set(allPages.map(page => page.file.path));
+    
+    allFiles
+        .filter(file => file.extension !== 'md' && 
+                      isFileRelevant(file.path, datePaths) && 
+                      !seen.has(file.path))
+        .forEach(file => {
+            const isToday = file.path.startsWith(todayPath);
+            (isToday ? todayFiles : recentFiles).push(file);
+        });
 
     const sortByMtime = (a, b) => b.stat.mtime - a.stat.mtime;
     return {
@@ -161,17 +155,15 @@ const formatLinks = (links) => {
     if (!links?.length) return "";
 
     const seen = new Set();
-    const result = [];
-
-    for (const link of links) {
-        if (!link?.path) continue;
-
-        const wikiLink = createWikiLink(link.path, link.name || link.path);
-        if (!seen.has(wikiLink)) {
+    const result = links
+        .filter(link => link?.path)
+        .map(link => createWikiLink(link.path, link.name || link.path))
+        .filter(wikiLink => {
+            if (seen.has(wikiLink)) return false;
             seen.add(wikiLink);
-            result.push(wikiLink);
-        }
-    }
+            return true;
+        });
+
     return result.join('\n');
 };
 
@@ -180,25 +172,23 @@ const getBacklinks = (filePath, backlinkMap) =>
 
 const getOutlinks = (filePath, outlinkMap) => {
     const outlinks = outlinkMap.get(filePath) || [];
-    if (outlinks.length === 0) return "";
+    if (!outlinks.length) return "";
 
     const seen = new Set();
-    const result = [];
-
-    for (const link of outlinks) {
-        if (!link.path) continue;
-        const wikiLink = createWikiLink(link.path, link.path);
-        if (!seen.has(wikiLink)) {
+    const result = outlinks.array()
+        .filter(link => link?.path)
+        .map(link => createWikiLink(link.path, link.path))
+        .filter(wikiLink => {
+            if (seen.has(wikiLink)) return false;
             seen.add(wikiLink);
-            result.push(wikiLink);
-        }
-    }
+            return true;
+        });
 
     return result.join('\n');
 };
 
 const getTags = (file, pageDataCache) => {
-    if (!isMarkdownFile(file)) return '';
+    if (file.extension !== 'md') return '';
 
     const pageData = pageDataCache.get(file.path);
     if (!pageData?.tags?.length) return '';
@@ -217,16 +207,16 @@ const createTableRow = (file, backlinkMap, outlinkMap, pageDataCache) => [
 const createTableData = (files, backlinkMap, outlinkMap, pageDataCache) =>
     files.map(file => createTableRow(file, backlinkMap, outlinkMap, pageDataCache));
 
-const renderSection = (dv, title, files, tableData) => {
+const renderSection = (title, files, tableData) => {
     dv.header(2, title);
-
-    if (!files || files.length === 0) {
-        dv.paragraph("該当なし");
-        return;
-    }
 
     const totalCount = files.length;
     dv.paragraph(`**${totalCount}件** - 更新日時 降順`);
+
+    if (!files?.length) {
+        dv.paragraph("該当なし");
+        return;
+    }
 
     for (let i = 0; i < totalCount; i += DISPLAY_SIZE) {
         const batch = tableData.slice(i, i + DISPLAY_SIZE);
@@ -260,7 +250,7 @@ const executeView = () => {
 
         // Step 3: 表示 今日
         const today = new Date();
-        renderSection(dv, today.toLocaleDateString(), todayFiles, todayTableData);
+        renderSection(today.toLocaleDateString(), todayFiles, todayTableData);
 
         // Step 4: 表示 過去分
         const currentDate = new Date();
@@ -269,13 +259,11 @@ const executeView = () => {
         const endDate = new Date(currentDate);
         startDate.setDate(startDate.getDate() - (DAYS - 1));
         const recentTitle = formatDateRange(startDate, endDate, DAYS);
-        renderSection(dv, recentTitle, recentFiles, recentTableData);
+        renderSection(recentTitle, recentFiles, recentTableData);
     } catch (error) {
         dv.paragraph(`エラーが発生しました: ${error.message}`);
     } finally {
-        if (stringPool.size > 0) {
-            stringPool.clear();
-        }
+        stringPool.clear();
     }
 };
 

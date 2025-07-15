@@ -56,7 +56,7 @@
 - ノート（マークダウン .md ファイル）
 	- デフォルトをリーディングビューにして誤編集を防止
 	- 後日、続きを書く場合は新規ノートを作成し、過去ノートにリンク
-	- プロパティのタグのみ後日編集可能
+	- プロパティのタグ、タスクのチェック の2つのみ後日編集可能
 - 添付ファイル（.md ファイルを除く全てのファイル）
 	- 画像、コード、キャンバスなど、ノートを除く全てが対象
 	- 過去のファイルの編集は、作成日年月日ディレクトリ `01_data/YYYY/MM/DD/` 配下にコピーし編集
@@ -134,6 +134,7 @@
     - 探しやすいタグをつける
     - タグが実質的なMOC（Map of Contents）として働く
 	    - Tag Folder で一覧表示
+	    - DataViewで一覧表示
 4. **内容記述**:
     - トピックの概要・詳細を記述
     - 関連する既存ノートがあればリンクする
@@ -201,6 +202,7 @@ tags:
     - 特定条件に合うノートの一覧を自動生成
     - 例1: 最近90日間のノート一覧 → [[03_recent_90days]]
     - 例2: 2025/6/1~30期間のノート一覧 → [[04_e.g.2025-06-01_2025-06-30]]
+    - 例3: タグで絞り込みノート一覧 → [[05_filter_by_tags]]
 5. **Smart Connectionsによる関連ノート一覧表示**
 	- AIによる意味的類似性のあるノートの一覧表示
 	- Smart ChatによるAIとの対話
@@ -223,6 +225,57 @@ tags:
 **避けるべき使い方**：
 - ノートの内容をAIに代筆させる
 - AI生成情報をそのまま記録する
+
+## [Obsidian Web Clipper](https://obsidian.md/clipper) 用設定
+
+```json
+{
+	"schemaVersion": "0.1.0",
+	"name": "DAGnetz",
+	"behavior": "create",
+	"noteContentFormat": "",
+	"properties": [
+		{
+			"name": "title",
+			"value": "{{title}}",
+			"type": "text"
+		},
+		{
+			"name": "source",
+			"value": "{{url}}",
+			"type": "text"
+		},
+		{
+			"name": "author",
+			"value": "{{author|split:\\\", \\\"|wikilink|join}}",
+			"type": "multitext"
+		},
+		{
+			"name": "published",
+			"value": "{{published}}",
+			"type": "date"
+		},
+		{
+			"name": "created",
+			"value": "{{date|date:\\\"YYYY-MM-DD HH:mm:ss\\\"}}",
+			"type": "date"
+		},
+		{
+			"name": "description",
+			"value": "{{description}}",
+			"type": "text"
+		},
+		{
+			"name": "tags",
+			"value": "文献",
+			"type": "multitext"
+		}
+	],
+	"triggers": [],
+	"noteNameFormat": "{{title}}",
+	"path": "01_data/{{date|date:YYYY/MM/DD}}"
+}
+```
 
 ## Obsidian 設定
 
@@ -290,6 +343,8 @@ tags:
 	- Templater: Insert 00_templates/11_embed_code.md
 - Ctrl + R
 	- ライブプレビュー/ソースモードを切り替える
+- Ctrl + J
+	- Templater: Create 00_templates/02_literature.md
 
 ## [コアプラグイン](https://publish.obsidian.md/help-ja/%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3/%E3%82%B3%E3%82%A2%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3) 設定
 
@@ -355,6 +410,10 @@ Obsidian Vaultをクエリ可能なデータベースとして扱うプラグイ
 	- 直近90日に更新した全てのファイルを更新日時 降順で表示
 - [[04_e.g.2025-06-01_2025-06-30]]
 	- 指定期間（2025/5/1~31）に作成したファイルを更新日時 降順で表示
+- [[05_filter_by_tags]]
+	- タグで絞り込みしたノートを更新日時 降順で表示
+- [[06_tasks]]
+	- タグで絞り込みしたノートに記述されたタスクを全て一覧表示
 
 - Enable JavaScript queries
 	- ON
@@ -591,6 +650,10 @@ Template hotkeys
 	- [[11_embed_code]]は、Embed Code File プラグインのコード埋め込みテンプレート
 	- Hotkey設定：
 		- Templater: Insert 00_templates/[[11_embed_code]].md → Alt + C
+- 00_templates/[[02_literature]].md
+	- 文献ノート用テンプレート
+	- Hotkey設定：
+		- Templater: Create 00_templates/[[02_literature]].md → Ctrl + J
 
 Folder templates
 - / ... 00_templates/[[01_note]].md

@@ -54,5 +54,13 @@
       ],
       "key": "H"
     }
+  ],
+  "templater-obsidian:create-00_templates/02_literature.md": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "J"
+    }
   ]
 }

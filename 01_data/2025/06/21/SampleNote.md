@@ -11,9 +11,14 @@ tags:
 
 ## Heading 2
 
+- [x] Task A
+- [ ] Task B
+
 ### Heading 3
 
 drawioで作成した画像
+[[sample.drawio]]
+
 svgファイル
 
 ![[sample.svg]]

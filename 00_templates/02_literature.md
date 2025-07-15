@@ -1,6 +1,12 @@
 ---
 created: <% tp.date.now("YYYY-MM-DD HH:mm:ss") %>
 tags:
+  - 文献
+title: 
+source: 
+author: 
+published: 
+description:
 ---
 <%*
 const CONFIG = {

@@ -5,7 +5,8 @@ tags:
 <%*
 const CONFIG = {
   BASE_FOLDER: "01_data",
-  DATE_FORMAT: "YYYY/MM/DD"
+  DATE_FORMAT: "YYYY/MM/DD",
+  TITLE: ""  // ここに任意のタイトルを設定。空欄("")の場合はデフォルトのファイル名を使用
 }
 
 const createFolderIfNotExists = async (path) => {
@@ -38,11 +39,21 @@ const notifyIfRenamed = (original, newName) => {
   }
 }
 
+const generateFileName = (title) => {
+  if (title && title.trim() !== "") {
+    const dateStr = tp.date.now("YYYY-MM-DD")
+    return `${title.trim()}_${dateStr}`
+  } else {
+    return tp.file.title
+  }
+}
+
 try {
   const folderPath = `${CONFIG.BASE_FOLDER}/${tp.date.now(CONFIG.DATE_FORMAT)}`
   const originalName = tp.file.title
-  const newName = await moveFileToFolder(originalName, folderPath)
-  notifyIfRenamed(originalName, newName)
+  const newFileName = generateFileName(CONFIG.TITLE)
+  const finalName = await moveFileToFolder(newFileName, folderPath)
+  notifyIfRenamed(newFileName, finalName)
 } catch (error) {
   new Notice(`エラー: ${error.message}`)
 }

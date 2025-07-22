@@ -21,8 +21,10 @@
   "smart_view_filter": {
     "render_markdown": true,
     "show_full_path": false,
+    "exclude_blocks_from_source_connections": true,
     "expanded_view": false,
-    "results_limit": "20"
+    "results_limit": "20",
+    "exclude_outlinks": true
   },
   "excluded_headings": "",
   "language": "en",

@@ -570,6 +570,9 @@ Embed Code File用のテンプレートをTemplaterに登録しているので�
 Smart ConnectionsはAIの意味的類似性を使ってObsidianのノート間の関連性を自動で発見し、手動でのリンク作成や整理の手間を省くプラグイン
 
 Smart Connections
+- Connections view
+	- Exclude outlinks → ON
+	- Hide blocks in results → ON
 - Smart Environment
 	- Excluded folders
 		- 00_templates

@@ -73,13 +73,19 @@ const processOutlinks = (outlinks) => {
     return result.length ? result.join('\n') : "";
 };
 
+const processTags = (tags) => {
+    if (!tags?.length) return "";
+    return tags.map(tag => tag.startsWith('#') ? tag : `#${tag}`).join('\n');
+};
+
 const createTableRow = (page) => {
     const link = page.file.link;
+    const tags = processTags(page.tags);
     const outlinks = processOutlinks(page.file.outlinks);
     const backlinks = processBacklinks(page.file.inlinks);
     const mtime = page.file.mtime;
 
-    return [link, outlinks, backlinks, mtime];
+    return [link, tags, outlinks, backlinks, mtime];
 };
 
 const buildQuery = () => {
@@ -89,12 +95,12 @@ const buildQuery = () => {
         const tagQuery = FILTER_TAGS.map(tag => `#${tag}`).join(' or ');
         query += ` and (${tagQuery})`;
     }
-    
+
     if (EXCLUDE_TAGS && EXCLUDE_TAGS.length > 0) {
         const excludeQuery = EXCLUDE_TAGS.map(tag => `-#${tag}`).join(' and ');
         query += ` and ${excludeQuery}`;
     }
-    
+
     return query;
 };
 
@@ -103,15 +109,15 @@ const renderSection = (pages) => {
     let filterText = "";
 
     const filterParts = [];
-    
+
     if (FILTER_TAGS && FILTER_TAGS.length > 0) {
         filterParts.push(`含む: #${FILTER_TAGS.join(' #')}`);
     }
-    
+
     if (EXCLUDE_TAGS && EXCLUDE_TAGS.length > 0) {
         filterParts.push(`除外: #${EXCLUDE_TAGS.join(' #')}`);
     }
-    
+
     if (filterParts.length > 0) {
         filterText = ` (${filterParts.join(' | ')})`;
     }
@@ -123,14 +129,14 @@ const renderSection = (pages) => {
         dv.paragraph("該当なし");
         return;
     }
-    
+
     for (let i = 0; i < totalCount; i += DISPLAY_SIZE) {
         const batchEnd = Math.min(i + DISPLAY_SIZE, totalCount);
         const batch = pages.slice(i, batchEnd).map(createTableRow);
         const batchStart = i + 1;
 
         dv.paragraph(`**${batchStart}-${batchEnd}件目**`);
-        dv.table(["ファイル", "リンク先", "被リンク", "更新日時"], batch);
+        dv.table(["ファイル", "タグ", "リンク先", "被リンク", "更新日時"], batch);
     }
 };
 
@@ -140,7 +146,7 @@ const executeMarkdownList = () => {
         const pages = dv.pages(query)
             .sort(p => p.file.mtime, 'desc')
             .array();
-        
+
         renderSection(pages);
     } catch (error) {
         dv.paragraph(`エラーが発生しました: ${error.message}`);

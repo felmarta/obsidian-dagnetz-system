@@ -62,5 +62,13 @@
       ],
       "key": "J"
     }
+  ],
+  "obsidian-minimal-settings:cycle-minimal-table-width": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "T"
+    }
   ]
 }

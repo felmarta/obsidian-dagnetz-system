@@ -1,19 +1,13 @@
 ---
-tags: view
+tags:
+  - task
 ---
+## Tasks
 ```dataviewjs
 const ROOT_DIR = "01_data";
 
-// 複数タグ対応（空の配列の場合は全てのファイルを表示）
-// 例1: ["work"] ; タグ1つ
-// 例2: ["work", "personal"] ; 複数タグ
-// 例3: [] ; タグ指定なし
 const FILTER_TAGS = ["sample"];
 
-// 除外したいタグを指定（空の配列の場合は除外なし）
-// 例1: ["完了"] ; タグ1つ除外
-// 例2: ["完了", "アーカイブ"] ; 複数タグ除外
-// 例3: [] ; 除外なし
 const EXCLUDE_TAGS = [];
 
 const stringPool = new Map();
@@ -62,7 +56,7 @@ const buildFilterText = () => {
         filterParts.push(`除外: #${EXCLUDE_TAGS.join(' #')}`);
     }
     
-    return filterParts.length > 0 ? ` (${filterParts.join(' | ')})` : "";
+    return filterParts.length > 0 ? `${filterParts.join(' , ')}` : "";
 };
 
 const collectTasksFromPages = (pages) => {
@@ -122,7 +116,7 @@ const executeTaskExtraction = () => {
         const { pendingTasks, completedTasks } = collectTasksFromPages(pages);
         
         const filterText = buildFilterText();
-        dv.header(2, `タスク一覧${filterText}`);
+        dv.paragraph(`${filterText}`);
 
         const totalTasks = pendingTasks.length + completedTasks.length;
         if (totalTasks === 0) {
@@ -146,4 +140,32 @@ const executeTaskExtraction = () => {
 };
 
 executeTaskExtraction();
+```
+
+## Notes
+```base
+formulas:
+  backlinks: file.backlinks.map(if(value.asFile(), value.asFile().asLink(value.asFile().name.replace(/\.[^\.]+$/, "")), null)).unique().filter(value)
+  last_edit: file.mtime.relative()
+properties:
+  formula.backlinks:
+    displayName: backlinks
+  formula.last_edit:
+    displayName: last edit
+views:
+  - type: table
+    name: all
+    filters:
+      and:
+        - file.folder.contains("01_data")
+        - file.hasTag("sample")
+    order:
+      - file.name
+      - file.tags
+      - file.links
+      - formula.backlinks
+      - formula.last_edit
+    sort:
+      - property: file.mtime
+        direction: DESC
 ```

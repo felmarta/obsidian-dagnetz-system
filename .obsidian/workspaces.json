@@ -28,13 +28,13 @@
                 "state": {
                   "type": "markdown",
                   "state": {
-                    "file": "02_view/03_recent_90days.md",
+                    "file": "02_view/10_dashboard.md",
                     "mode": "preview",
                     "source": false
                   },
                   "pinned": true,
                   "icon": "lucide-file",
-                  "title": "03_recent_90days"
+                  "title": "10_dashboard"
                 }
               }
             ],
@@ -50,7 +50,7 @@
           {
             "id": "fb81e9a5bb533dc6",
             "type": "tabs",
-            "dimension": 28.317272053372868,
+            "dimension": 32.91326908821349,
             "children": [
               {
                 "id": "f2a3e2439cb34eab",
@@ -71,7 +71,7 @@
                 "state": {
                   "type": "localgraph",
                   "state": {
-                    "file": "02_view/03_recent_90days.md",
+                    "file": "02_view/10_dashboard.md",
                     "options": {
                       "collapse-filter": true,
                       "search": "",
@@ -82,7 +82,7 @@
                       "showTags": true,
                       "showAttachments": true,
                       "hideUnresolved": false,
-                      "collapse-color-groups": true,
+                      "collapse-color-groups": false,
                       "colorGroups": [],
                       "collapse-display": true,
                       "showArrow": true,
@@ -99,7 +99,7 @@
                     }
                   },
                   "icon": "lucide-git-fork",
-                  "title": "03_recent_90daysのグラフ"
+                  "title": "10_dashboardのグラフ"
                 }
               }
             ],
@@ -108,7 +108,7 @@
           {
             "id": "997996fb5d4476c1",
             "type": "tabs",
-            "dimension": 71.68272794662714,
+            "dimension": 67.0867309117865,
             "children": [
               {
                 "id": "3c709899cee1aaf8",
@@ -117,7 +117,7 @@
                   "type": "smart-connections-view",
                   "state": {},
                   "icon": "smart-connections",
-                  "title": "Smart Connections"
+                  "title": "Connections"
                 }
               },
               {
@@ -144,7 +144,7 @@
           }
         ],
         "direction": "horizontal",
-        "width": 387.5
+        "width": 345.5
       },
       "right": {
         "id": "3b8c3cad91b8fd5d",
@@ -209,17 +209,16 @@
                 "state": {
                   "type": "outline",
                   "state": {
-                    "file": "02_view/03_recent_90days.md",
+                    "file": "02_view/10_dashboard.md",
                     "followCursor": false,
                     "showSearch": false,
                     "searchQuery": ""
                   },
                   "icon": "lucide-list",
-                  "title": "03_recent_90daysのアウトライン"
+                  "title": "10_dashboardのアウトライン"
                 }
               }
-            ],
-            "currentTab": 3
+            ]
           },
           {
             "id": "22141a08ca8d8176",
@@ -244,6 +243,7 @@
       },
       "left-ribbon": {
         "hiddenItems": {
+          "bases:Create new base": true,
           "workspaces:ワークスペースレイアウトを管理": true,
           "switcher:クイックスイッチャーを開く": true,
           "graph:グラフビューを開く": true,
@@ -253,11 +253,12 @@
           "obsidian-git:Open Git source control": true,
           "float-search:Search obsidian in modal view": false,
           "smart-connections:Open: Smart Chat": false,
-          "smart-connections:Open: View Smart Connections": true
+          "smart-connections:Smart Connections: Open connections view": true,
+          "smart-connections:Smart Connections: Open random connection": true
         }
       },
       "active": "ddbbfb04f1eb3651",
-      "mtime": "2025-06-28T07:20:44+09:00"
+      "mtime": "2025-08-23T19:07:54+09:00"
     }
   },
   "active": "default"

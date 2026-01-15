@@ -10,10 +10,10 @@
   "embed-code-file",
   "float-search",
   "global-search-and-replace",
-  "obsidian-image-toolkit",
   "mononote",
   "slash-commander",
   "obsidian-tagfolder",
   "various-complements",
-  "smart-connections"
+  "smart-connections",
+  "obsidian-image-toolkit"
 ]

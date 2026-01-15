@@ -1,6 +1,6 @@
 {
-  "alwaysUpdateLinks": true,
-  "newFileLocation": "folder",
+  "alwaysUpdateLinks": false,
+  "newFileLocation": "current",
   "newFileFolderPath": "01_data",
   "attachmentFolderPath": "./",
   "showUnsupportedFiles": true,

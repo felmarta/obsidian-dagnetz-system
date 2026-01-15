@@ -3,6 +3,7 @@ tags:
   - dashboard
 ---
 ## View
+
 ```base
 views:
   - type: table
@@ -44,6 +45,7 @@ views:
 ```
 
 ## Today | Pin
+
 ```base
 formulas:
   backlinks: file.backlinks.map(if(value.asFile(), value.asFile().asLink(value.asFile().name.replace(/\.[^\.]+$/, "")), null)).unique().filter(value)
@@ -89,6 +91,7 @@ views:
 ```
 
 ## Data
+
 ```base
 formulas:
   backlinks: file.backlinks.map(if(value.asFile(), value.asFile().asLink(value.asFile().name.replace(/\.[^\.]+$/, "")), null)).unique().filter(value)

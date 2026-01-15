@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "mhutchie.git-graph",
-        "hediet.vscode-drawio"
+        "hediet.vscode-drawio",
+        "mblode.zotero"
     ]
 }

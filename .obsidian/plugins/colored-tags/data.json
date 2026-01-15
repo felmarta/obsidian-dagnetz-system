@@ -11,7 +11,12 @@
   },
   "knownTags": {
     "dashboard": 3,
+    "pdf": 4,
+    "permanent": 5,
     "task": 4,
+    "zotero": 6,
+    "ガイド": 7,
+    "基準": 8,
     "文献": 1
   },
   "tagColors": {},

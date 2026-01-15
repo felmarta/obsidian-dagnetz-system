@@ -2,11 +2,14 @@
 created: <% tp.date.now("YYYY-MM-DD HH:mm:ss") %>
 tags:
   - 文献
+  - PDF
 title:
 source:
 author:
 published:
 description:
+zotero-citekey:  # Zoteroのcitekey（例：smith2020）
+zotero-link:     # Zoteroへのリンク（オプション、例：zotero://select/items/[itemKey]）
 ---
 <%*
 const CONFIG = {

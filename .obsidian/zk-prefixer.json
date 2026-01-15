@@ -1,0 +1,5 @@
+{
+  "template": "00_templates/01_note",
+  "folder": "01_data",
+  "format": "YYYYMMDD"
+}
